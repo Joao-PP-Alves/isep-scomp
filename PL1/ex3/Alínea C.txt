@@ -1,0 +1,1 @@
+A mensagem SCOMP! é imprimida no ecrã 8 vezes.
