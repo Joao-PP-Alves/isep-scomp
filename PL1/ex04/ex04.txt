@@ -1,0 +1,26 @@
+ex04
+
+a)  pai:
+	a = 5
+	b = 0 (pois é o filho)
+	c = pid_filho
+	d = pid_pai
+
+	filho:
+	a = 5
+	b = pid_filho
+	c = pid_pai
+	d = pid_paipai
+
+
+b)
+	pai						filho
+	|
+	|-----------------------|
+	|						|
+	|						|
+	|						|
+a = 5						a = 5
+b = pid_filho				b = 0
+c = pid_pai					c = pid_filho
+d = pid_avo					d = pid_pai
