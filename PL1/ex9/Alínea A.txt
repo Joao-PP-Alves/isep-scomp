@@ -1,0 +1,2 @@
+O output pode não ser sempre ordenado, não o podemos garantir, pois não sabemos qual dos processos vai correr primeiro.
+A única coisa que conseguimos assegurar é que todos os filhos vão terminar antes do processo main.
