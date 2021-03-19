@@ -1,0 +1,23 @@
+ex06
+
+a) 
+Number of processes 2^4 = 16 processos
+
+pai
+	|
+	|			filho
+	|-----------|
+	|			|			filho
+	|			|-----------|	
+	|			|			|			filho
+	|			|			|-----------|
+	|			|			|			|			filho
+	|			|---|			|			|-----------|
+	|			|	|		|			|			|
+	|
+	
+
+b)
+trocar o 4 no ciclo for, por 2.
+
+c)
