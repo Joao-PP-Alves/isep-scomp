@@ -11,15 +11,18 @@ int main() {
 	
     int i = 0;
     pid_t pids[NR_OF_PROCESSES];
+	pid_t allpids[NR_OF_PROCESSES];
 	int count = 0;
     printf("Este é o inicio do processo pai: %d.\n", getpid());
+	int exitd = 0;
 	
     for (i = 0; i < NR_OF_PROCESSES; i++) {
+		exitd++;
 		pid_t p = fork();
 		if (p == 0) {
 			//sleep(1);
-			printf("Este é o inicio e fim do processo: %d.\n", getpid());
-			exit(0);
+			printf("Este é o inicio e fim do processo: %d, com o nr: %d\n", getpid(), exitd);
+			exit(exitd);
 		}
 		if (p % 2 == 0){
 			pids[count] = p;
@@ -31,7 +34,7 @@ int main() {
     for (i = 0; i < count; i++) {
 		waitpid(pids[i], &status, 0);
 		if (WIFEXITED(status)) {
-			//printf("O filho com o PID = %d terminou com valor = %d\n", index+1, getpid(), WEXITSTATUS(status));
+			printf("O pai esperou pelo filho: %d que terminou com valor = %d\n", pids[i],  WEXITSTATUS(status));
 		}
 	}
   
