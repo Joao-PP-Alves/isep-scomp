@@ -26,9 +26,12 @@ int spawn_childs(int n)
 
 
 int main() {
-		
+
+	pid_t pidpai = getpid();
+	printf("%d\n", pidpai);
 	int id = spawn_childs(NUMBER_OF_CHILDREN);
 
+	
     if (id>0) {
         exit(id*2);
     }
@@ -41,7 +44,10 @@ int main() {
             printf("O filho com pid %d retornou: %d\n", pid, WEXITSTATUS(status));
         }
     }
-
+	
+	if (getpid() == pidpai) {
+		printf("%d\n", pidpai);
+	}	
 	
 	return 0;
 }
