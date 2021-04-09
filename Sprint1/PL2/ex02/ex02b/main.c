@@ -8,16 +8,16 @@
 int main(void) {
     const int LEITURA = 0;
     const int ESCRITA = 1;
-    const int BUFFER =  100;
-    
-    char str_input[BUFFER];
-    int i_input;
+
     int fd[2];
 
     struct S1 {
         int i;
-        char str[BUFFER-4];
+        char str[100];
     };
+	
+	struct S1 info;
+
     if(pipe(fd)==-1){ 
         perror("Pipe failed");
         return 1; 
@@ -32,23 +32,19 @@ int main(void) {
     if(pid>0){
         close(fd[LEITURA]);
         printf("PAI:Insira o numero\n");
-        scanf("%d", &i_input);
+        scanf("%d", &info.i);
         printf("PAI:Insira a string\n");
-        scanf("%s", str_input);
-        struct S1 s_pai;
-        s_pai.i=i_input;
-        strcpy(s_pai.str, str_input);
-        write(fd[ESCRITA], &s_pai, sizeof(s_pai)); 
+        scanf("%s", info.str);
+        write(fd[ESCRITA], &info, sizeof(info)); 
         close(fd[ESCRITA]);
     }
 
-    if(pid==0){
+    if(pid==0){	
         close(fd[ESCRITA]);
-        struct S1 s_filho;
-        read(fd[LEITURA], &s_filho, BUFFER);
+        read(fd[LEITURA], &info, 100);
         close(fd[LEITURA]);
-        printf("filho: numero %d\n", s_filho.i);
-        printf("filho: string %s\n", s_filho.str);
+        printf("filho: numero %d\n", info.i);
+        printf("filho: string %s\n", info.str);
         exit(EXIT_SUCCESS);
     }
     return 0;

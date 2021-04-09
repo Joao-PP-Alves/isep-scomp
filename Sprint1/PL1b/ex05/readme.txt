@@ -19,7 +19,7 @@ stopped, their number in order of stopping priority and the command that created
 The kill %1 command, terminated the process that was stopped first and therefore
 is the first one in the list of stopped processes. kill %2 the second, and so forth.
 
-e) write is a simple kernel function that only prints the string to be printed.
+g) write is a simple kernel function that only prints the string to be printed.
 printf is a costlier function that it is outside of the kernel and only calls for 
 the write function after it receives all the parameter and format the string to be printed.
 So there is a chance that while the printf is gathering all the info to be printed, it 

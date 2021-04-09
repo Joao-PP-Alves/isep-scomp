@@ -34,7 +34,7 @@ int main(void) {
         printf("Processo PAI:introduza um numero\n");
         scanf("%d", &num);
         printf("Processo PAI:introduza uma string\n");
-        scanf("%s", &str);
+        scanf("%s", str);
         write(fd[ESCRITA], &num, sizeof(num)); 
         write(fd[ESCRITA], &str, sizeof(str)+1); 
         close(fd[ESCRITA]);
