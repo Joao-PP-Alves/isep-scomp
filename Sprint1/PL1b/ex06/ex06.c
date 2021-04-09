@@ -7,7 +7,7 @@
 #include <time.h>
 #include <stdlib.h>
 
-int counter = 0;
+int counter = 1;
 
 void handle_signal(int signo, siginfo_t *sinfo, void *context) {
     sleep(2);
