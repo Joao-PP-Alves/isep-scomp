@@ -11,7 +11,10 @@ int main(){
 	pid_t p;
 	int pid_pipe;
 	int pipe_space[2]; // 0->leitura, 1->escrita
-	pipe_space(pipe_space);
+	if (pipe(pipe_space) == -1){
+		perror("Pipe failed!");
+		exit(1);
+	}
 	p = fork();
 	
 	if (p > 0){
