@@ -7,12 +7,12 @@
 #include <time.h>
 #include <stdlib.h>
 
-int counter = 1;
+volatile sig_atomic_t SIGNAL_COUNTER = 1;
 
 void handle_signal(int signo, siginfo_t *sinfo, void *context) {
     sleep(2);
 	char buffer[45] = "\0";
-	sprintf(buffer, "SIGUSR1 signal captured, USR1_COUNTER = %d\n",counter++);
+	sprintf(buffer, "SIGUSR1 signal captured, USR1_COUNTER = %d\n",SIGNAL_COUNTER++);
 	write(STDOUT_FILENO, buffer, (sizeof(buffer)+1));
 }
 
@@ -57,6 +57,7 @@ int main() {
         kill(getppid(),SIGTERM);
         nanosleep(&time, &time2);
         kill(getppid(),SIGUSR1);
+        nanosleep(&time, &time2);
     }
     if (pid == 0){
      for(;;){
