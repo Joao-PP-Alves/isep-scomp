@@ -12,7 +12,6 @@ volatile sig_atomic_t taskAFinishSignaL = 0;
 
 void handle_USR1 (int signo, siginfo_t *sinfo, void *context) {
 	write(STDOUT_FILENO, "SIGUSR1 was received and handled.\n", 34);
-	taskAFinishSignaL = signo;
 }
 
 
