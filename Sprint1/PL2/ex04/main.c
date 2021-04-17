@@ -41,10 +41,13 @@ int main(void) {
         }
         fclose(filep);
         close(fd[ESCRITA]);
-        if(line!=NULL)
-            free(line);
-        wait(NULL);
-    
+		
+        int status;
+        pid_t pid =wait(&status);
+        if (WIFEXITED(status)) {
+			printf("pai esperou pelo filoh\n");
+        }
+		
     }else{
         close(fd[ESCRITA]);
         char buffer[BUFFER_SIZE];

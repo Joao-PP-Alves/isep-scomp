@@ -11,8 +11,7 @@ int NUMBER_OF_CHILDREN = 5;
 const int LEITURA = 0;
 const int ESCRITA = 1;
 
-int make_children(int n)
-{
+int make_children(int n) {
     pid_t pid;
     int i;
     for (i = 0; i < n; i++) {
