@@ -1,14 +1,18 @@
-main: main.o 
-	gcc -Wall -g main.o -o main
+writer: writer.o
+	gcc -g -Wall writer.o -o writer -lrt
 
-main.o: main.c 
-	gcc -Wall -g -c main.c
+writer.o: writer.c
+	gcc -g -Wall -c writer.c -o writer.o
 
-run: main
-	./main
+reader: reader.o
+	gcc -g -Wall reader.o -o reader -lrt
+
+reader.o: reader.c
+	gcc -g -Wall -c reader.c -o reader.o
 
 clean:
-	rm *.o main
+	rm *.o
 
-debug:
-	ddd main
+run: writer reader
+	./writer
+	./reader
