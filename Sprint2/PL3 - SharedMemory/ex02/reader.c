@@ -25,16 +25,16 @@ int main(void){
 
 	shm_field = shm_open("/ex02", O_RDWR, S_IWUSR|S_IRUSR);
 	if (shm_field == -1){
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 	
 	int ftruncate_value = ftruncate(shm_field, data_size);
 	if (ftruncate_value == -1) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
 	product = (product_info *) mmap(NULL, data_size, PROT_READ|PROT_WRITE, MAP_SHARED, shm_field, 0);
 	if (product == MAP_FAILED) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
 	printf("\nREADER\n");
     printf("Retrieved product information:\n");
@@ -46,11 +46,15 @@ int main(void){
 	
 	close_check = munmap(product, data_size);
 	if (close_check < 0) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
+	close_check = close(open_check);
+	if (close_check < 0) 
+        exit(EXIT_FAILURE);
+
 	close_check = shm_unlink("/ex02");
 	if (close_check < 0) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
 	return 0;
 }

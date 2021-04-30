@@ -26,15 +26,15 @@ int main(void){
 	
 	shm_field = shm_open("/ex02", O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
 	if (shm_field == -1) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
 	int ftruncate_value = ftruncate(shm_field, data_size);
 	if (ftruncate_value == -1) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
 	product = (product_info *) mmap(NULL, data_size, PROT_READ|PROT_WRITE, MAP_SHARED, shm_field, 0);
 	if (product == MAP_FAILED) 
-        exit(1);
+        exit(EXIT_FAILURE);
 		
 	printf("WRITER\n");
     printf("Fill the following product informtion:\n");
@@ -50,11 +50,11 @@ int main(void){
 	
 	close_check = munmap((void *) product, data_size);
 	if (close_check < 0) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	
 	close_check = close(shm_field);
 	if (close_check < 0) 
-        exit(1);
+        exit(EXIT_FAILURE);
 	printf("FIM\n");
 	return 0;
 }
