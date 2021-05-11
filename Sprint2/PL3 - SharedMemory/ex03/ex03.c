@@ -110,22 +110,6 @@ int main(void) {
 		
 
 	}
-	
-	// getting finish time
-	//long finishShMemory = instantTime.tv_sec * (int)1e6 + instantTime.tv_usec;
-
-	//printf("Shared Memory took %ld to finish transfer\n", (finishShMemory - start));
-
-	
-	
-	
-		/*
-	
-	for (i = 0; i < isepInfoSize; i++) {
-		isepInfo1[i] = array[i];
-	}		
-		**/
-
 
 	
 	gettimeofday(&instantTime, NULL);
