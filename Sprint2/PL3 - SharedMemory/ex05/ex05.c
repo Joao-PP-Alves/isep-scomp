@@ -90,3 +90,4 @@ Only write the value on the screen at the end. Review the results. Will these re
 No, the results will not be the same since both the parent and the child processes are incrementing "i".
 So concurrently there's no way (as the program is now) to know how many times the parent or the child 
 will increment/decrement the numbers in the structure.
+*/
