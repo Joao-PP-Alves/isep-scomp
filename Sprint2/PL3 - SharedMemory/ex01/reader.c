@@ -38,6 +38,20 @@ int main(void) {
 	printf("Reader accessed shared memory Student and it has the following info:\n");
 	printf("Number: %d\n", student1Again->number);
 	printf("Name: %s\n", student1Again->name);
+	
+	
+	if (munmap((void *)student1Again, studentSize) < 0) {
+        printf("Error unmapping at munmap()!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (close(fd) < 0) {
+        printf("Error at close()!\n");
+        exit(EXIT_FAILURE);
+    }
+	
+	printf("-------------- Reader exiting ----------------\n");		
+
 
 	return 0;
 	

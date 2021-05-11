@@ -43,8 +43,8 @@ int main(void) {
 	printf("Number: %d\n", student1->number);
 	printf("Name: %s\n", student1->name);
 
-
-    if (munmap((void *)student1, studentSize) < 0) {
+	
+	if (munmap((void *)student1, studentSize) < 0) {
         printf("Error unmapping at munmap()!\n");
         exit(EXIT_FAILURE);
     }
