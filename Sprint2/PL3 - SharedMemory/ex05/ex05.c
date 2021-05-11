@@ -43,7 +43,7 @@ int main(void) {
 	
 	
 	pid_t pid = fork();
-	int i;
+	int i, j = 0;
 	
 	
 	if (pid == 0) {
@@ -55,18 +55,18 @@ int main(void) {
 		exit(EXIT_SUCCESS);
 	}
 	if (pid > 0) {
-		while (i < REPEATS) {
+		while (j < REPEATS) {
 			numeros->num1++;
 			numeros->num2--;
-			i++;
+			j++;
 		}	
 	}
+	
+	wait(NULL);
 	
 	printf("num1: %d\n", numeros->num1);
     printf("num2: %d\n", numeros->num2);
 
-
-	//wait(NULL);
 
     if (munmap((void *) numeros, sizeof(numStrct)) < 0) {
         printf("Error unmapping at munmap()!\n");
@@ -90,4 +90,12 @@ Only write the value on the screen at the end. Review the results. Will these re
 No, the results will not be the same since both the parent and the child processes are incrementing "i".
 So concurrently there's no way (as the program is now) to know how many times the parent or the child 
 will increment/decrement the numbers in the structure.
+The answer above was written in the case of the parent and child only were allowed to do their increment/decrement
+for 1000000 times cumulatively
+
+Since both of the have to their increment/decrement 1000000 times my best guess is since both are trying to 
+write on the same spaces of the shared memory, some of the increments/decrements are lost due to this 
+concurrency
+
+
 */
