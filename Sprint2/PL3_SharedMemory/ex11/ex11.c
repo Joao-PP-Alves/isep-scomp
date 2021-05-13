@@ -14,6 +14,8 @@
 
 #define TOTAL 1000
 #define SMALL 10
+#define LEITURA 0
+#define ESCRITA 1
 
 
 void fill_array(int *array, int size){
@@ -47,6 +49,7 @@ int main(void) {
 
 	fill_array(array1, TOTAL);
 
+/*
 	shm_unlink ("/ex09");
 	int fd = shm_open("/ex09", O_CREAT|O_EXCL|O_RDWR, S_IRUSR|S_IWUSR);
 	
@@ -54,8 +57,11 @@ int main(void) {
         printf("Error opening shared memory. Please check writer.c!\n");
         exit(EXIT_FAILURE);
     }
-		
-	int *array2;
+	*/
+	
+	int array2[SMALL];
+	
+	/*
 	ftruncate(fd, SMALL * sizeof(int));
 	array2 = (int*) mmap(NULL, SMALL * sizeof(int), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
 	
@@ -63,7 +69,12 @@ int main(void) {
 		printf("Could not retreive info from shared memory! -Exiting-\n");
 		return -1;
 	}
-	pid_t pidFather = getpid();
+	*/
+	int fdPipe[2];
+	if (pipe(fdPipe) == -1) {
+        perror("Pipe failed");
+        return 1;
+    }
 	
 	int id = make_children(SMALL);  
 	
@@ -74,32 +85,46 @@ int main(void) {
 			for (j = 100*i; j < (100*i)+99; j++) {
 				if (array1[j] > maximo_array1) {
 					maximo_array1 = array1[j];
+					
 				}
 			}
-			array2[i] = maximo_array1;
-			//printf("Maximo local[%d]: %d\n", i, array2[i]);
+			close(fdPipe[LEITURA]);
+			write(fdPipe[ESCRITA], &maximo_array1, sizeof(int));
+			close(fdPipe[ESCRITA]);
+			//printf("Maximo local childs[%d]: %d\n", i, maximo_array1);
 
 			exit(EXIT_SUCCESS);
 		}
 	}
 
+	int max_transf;
+    int status;
+
+	for (j = 0; j < SMALL; j++) {
+		wait(&status);
+		//printf("waited for %d childs\n", j+1);
+	}
+
+	close(fdPipe[ESCRITA]);
+
+	for (j = 0; j < SMALL; j++) {
+		read(fdPipe[LEITURA], &max_transf, sizeof(int));
+		array2[j] = max_transf;
+		printf("Maximo local retirado do pipe [%d]: %d\n", j, array2[j]);
+    }
+	close(fdPipe[LEITURA]); 
 	
 	int maximo_array2 = 0;
-    int status;
-	for (j = 0; j < SMALL; j++) {
-		wait(&status);	
-    }
-
 	for (i = 0; i < SMALL; i++) {
 		if (maximo_array2 < array2[i]) {
 			maximo_array2 = array2[i];
 		}
-		//printf("Maximo local[%d]: %d\n", i, array2[i]);
+
 	}
-		
-	printf("Maximo global: %d\n", maximo_array2);
+	printf("\nMaximo global: %d\n", maximo_array2);
+	
 
-
+/*
     if (munmap((void *) array2, SMALL * sizeof(int)) < 0) {
         printf("Error unmapping at munmap()!\n");
         exit(EXIT_FAILURE);
@@ -109,7 +134,7 @@ int main(void) {
         printf("Error at close()!\n");
         exit(EXIT_FAILURE);
     }
-	
+*/
 
 	return 0;
 	
