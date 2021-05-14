@@ -93,7 +93,7 @@ will increment/decrement the numbers in the structure.
 The answer above was written in the case of the parent and child only were allowed to do their increment/decrement
 for 1000000 times cumulatively
 
-Since both of the have to their increment/decrement 1000000 times my best guess is since both are trying to 
+Since both of them have to increment/decrement 1000000 times my best guess is since both are trying to 
 write on the same spaces of the shared memory, some of the increments/decrements are lost due to this 
 concurrency
 
