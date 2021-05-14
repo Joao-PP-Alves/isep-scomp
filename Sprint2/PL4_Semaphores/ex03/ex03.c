@@ -40,9 +40,9 @@ int main(void) {
 	int shm_field;
 	int data_size = sizeof(shared_memory_struct);
 
-	//shm_unlink("/ex03");
+	shm_unlink("/shm_ex03");
 
-	shm_field = shm_open("/ex03", O_CREAT | O_EXCL | O_RDWR , S_IRUSR|S_IWUSR);
+	shm_field = shm_open("/shm_ex03", O_CREAT  | O_RDWR , S_IRUSR|S_IWUSR);
     if (shm_field == -1){
 		perror("Opening shared memory ERROR.\n");
 		exit(EXIT_FAILURE);
@@ -58,7 +58,7 @@ int main(void) {
 	}
 	
 	sem_t *sem;
-	sem = sem_open("/ex03", O_CREAT, 0644, 1);
+	sem = sem_open("/sem_ex03", O_CREAT, 0644, 1);
 	if (sem == SEM_FAILED) {
         perror("Error in sem_open()");
         exit(EXIT_FAILURE);
@@ -111,7 +111,7 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (shm_unlink("/ex03") < 0) {
+	if (shm_unlink("/shm_ex03") < 0) {
         perror("unlink failed\n");
         exit(EXIT_FAILURE);
     }
@@ -121,7 +121,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    if (sem_unlink("/ex03") < 0) {
+    if (sem_unlink("/sem_ex03") < 0) {
         perror("Error at unlink sem");
         exit(EXIT_FAILURE);
     }
