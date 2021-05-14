@@ -46,11 +46,11 @@ int main(void) {
 	}
 	
 	if (pipe(fdProducer) == -1) {
-        perror("Pipe failed");
+        perror("Pipe Producer failed");
 		return 1;
     }
 	if (pipe(fdConsumer) == -1) {
-        perror("Pipe failed");
+        perror("Pipe Consumer failed");
 		return 1;
     }
 	
@@ -114,16 +114,7 @@ int main(void) {
 
 		close(fdProducer[LEITURA]);
 		close(fdConsumer[ESCRITA]);
-		
-		if(munmap(shared_data, data_size) == -1){
-			perror("Munmap failed.\n");
-			exit(EXIT_FAILURE);
-		}	
 
-		if(close(shm_field) == -1){
-			perror("Cant close object.\n");
-			exit(EXIT_FAILURE);
-		}
         exit(EXIT_SUCCESS);
     }
 
