@@ -11,6 +11,7 @@
 #include <sys/mman.h>
 #include <sys/time.h>
 #include <semaphore.h>
+#include <errno.h>
 
 #define NUMBER_OF_CHILDREN 50
 
@@ -39,10 +40,10 @@ int main(void) {
 	int shm_field;
 	int data_size = sizeof(shared_memory_struct);
 
-	shm_unlink("/shm_ex03");
-	sem_unlink("/sem_ex03");
+	shm_unlink("/shm_ex04");
+	sem_unlink("/sem_ex04");
 
-	shm_field = shm_open("/shm_ex03", O_CREAT  | O_RDWR , S_IRUSR|S_IWUSR);
+	shm_field = shm_open("/shm_ex04", O_CREAT  | O_RDWR , S_IRUSR|S_IWUSR);
     if (shm_field == -1){
 		perror("Opening shared memory ERROR.\n");
 		exit(EXIT_FAILURE);
@@ -58,7 +59,7 @@ int main(void) {
 	}
 	
 	sem_t *sem;
-	sem = sem_open("/sem_ex03", O_CREAT, 0644, 1);
+	sem = sem_open("/sem_ex04", O_CREAT, 0644, 1);
 	if (sem == SEM_FAILED) {
         perror("Error in sem_open()");
         exit(EXIT_FAILURE);
@@ -68,15 +69,40 @@ int main(void) {
 	int id = make_children(NUMBER_OF_CHILDREN);	
 	
     if (id >= 0 && id != idFather){
-		sem_wait(sem);
-        printf("Child writing - i:%d\n", id);
-		sprintf(shMemObj->str[id], "I’m the Father - with PID %d", getpid());
+		struct timespec waitingTime;
+		clock_gettime(CLOCK_REALTIME, &waitingTime);
+		waitingTime.tv_sec += 12;	//12 seconds max waiting for the semaphore to go "green"
+	
+		int semReturn;
+		semReturn = sem_timedwait(sem, &waitingTime);
+		
+		if (semReturn == -1 && errno == ETIMEDOUT) {
+			printf("Child %d couldn't wait anymore and made a temper tantrum!!! (sem timedout)\n", id);
+			exit(EXIT_FAILURE);
+		}
 		
 		srand(time(NULL) * getpid());
+		int lottery = rand() % 10;
+		
+		if (lottery > 8) {
+			printf("Child %d will write on top of the previous memory space.\n", id);
+			printf("Child %d writing (before timedwait) - i:%d\n", id, id);
+			sprintf(shMemObj->str[id - 1], "I’m the Father - with PID %d", getpid());
+		
+			//sleep(rand() % 4 + 1);
+			sleep(1); //sleep only for 1 second.
+			sem_post(sem);
+		} else {
+		
+		
+		printf("Child %d writing (before timedwait) - i:%d\n", id, id);
+		sprintf(shMemObj->str[id], "I’m the Father - with PID %d", getpid());
+		
 		//sleep(rand() % 4 + 1);
-		//sleep(1);
+		sleep(1); //sleep only for 1 second.
         sem_post(sem);
 
+		}
 		if(munmap(shMemObj, data_size) == -1){
 			perror("Munmap failed.\n");
 			exit(EXIT_FAILURE);
@@ -96,6 +122,7 @@ int main(void) {
 		wait(NULL);
 	}
 	
+	printf("===============================================");
 	for (i = 0; i < NUMBER_OF_CHILDREN; i++) {
 		printf("%s - i:%d\n", shMemObj->str[i], i);
 	}
@@ -111,7 +138,7 @@ int main(void) {
 		exit(EXIT_FAILURE);
 	}
 
-	if (shm_unlink("/shm_ex03") < 0) {
+	if (shm_unlink("/shm_ex04") < 0) {
         perror("unlink failed\n");
         exit(EXIT_FAILURE);
     }
@@ -121,7 +148,7 @@ int main(void) {
         exit(EXIT_FAILURE);
     }
 
-    if (sem_unlink("/sem_ex03") < 0) {
+    if (sem_unlink("/sem_ex04") < 0) {
         perror("Error at unlink sem");
         exit(EXIT_FAILURE);
     }
