@@ -17,7 +17,7 @@ int main(){
 	sem_unlink("/ex06_1");
 	sem_unlink("/ex06_2");
 	
-	sem_t *semChild = sem_open("/ex06_1",O_CREAT|O_EXCL, 0644, 1);
+	sem_t *semChild = sem_open("/ex06_1",O_CREAT|O_EXCL, 0644, 0); 
 	if(semChild == SEM_FAILED){
 		perror("Error creating the semaphore_1!\n");
 		exit(EXIT_FAILURE);
@@ -28,15 +28,14 @@ int main(){
 		exit(EXIT_FAILURE);
     }
 
-	
+	sem_post(semChild); // initial value to 1
+
 	
 	pid_t pid = fork();
 	if(pid == -1){
 		perror("Error on fork system call.\n");
 		exit(EXIT_FAILURE);
 	}
-	
-	//sem_post(semChild); // initial value to 1
 	
 	int i;
 	if(pid == 0){
