@@ -29,24 +29,27 @@ int main(int argc, char *agrv[]) {
 	
 
 	int i;
-	for (i = 0; i < carsWay1; i++) {
-		printf("carroSentido1\n");
-		fflush(0);
-		execProgram("./carroSentido1");
+	for (i = 0; i < carsTotal; i++) {
+		if (carsWay1 > 0) {
+			fflush(0);
+			execProgram("./carroSentido1");
+			sleep(1);
+			carsWay1--;
+		}
+		if (carsWay2 > 0) {
+			fflush(0);
+			execProgram("./carroSentido2");
+			sleep(1);
+			carsWay2--;
+		}
+	}
 
-	}
-	
-	for (i = 0; i < carsWay2; i++) {
-		printf("carroSentido2\n");
-		fflush(0);
-		execProgram("./carroSentido2");
-	}
 
 
 	for(i = 0; i < carsTotal; i++){
         wait(NULL);
     }
-	printf("Bridge closed!\n");
+	printf("Bridge free for more cars!\n");
 
 	
 
