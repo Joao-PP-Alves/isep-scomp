@@ -11,7 +11,7 @@
 #include <time.h>
 #include <string.h>
 
-#define NUMBER_OF_CLIENTS 2
+#define NUMBER_OF_CLIENTS 10
 
 typedef struct {
 	int ticketNumber; 
@@ -20,17 +20,17 @@ typedef struct {
 
 
 int main(void){
-    sem_t *semClientsRequest = sem_open("/sem_ex12_clients_request", O_CREAT, 0644, 0);
+    sem_t *semClientsRequest = sem_open("/sem_ex12_clients_request", O_CREAT);
 	if (semClientsRequest == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
     }
-	sem_t *semSellerFree = sem_open("/sem_ex12_seller_free", O_CREAT, 0644, 1);
+	sem_t *semSellerFree = sem_open("/sem_ex12_seller_free", O_CREAT);
 	if (semSellerFree == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
     }
-	sem_t *mutex = sem_open("/sem_mutex", O_CREAT, 0644, 0);
+	sem_t *mutex = sem_open("/sem_mutex", O_CREAT);
 	if (mutex == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
@@ -55,9 +55,15 @@ int main(void){
 		
 	int nextTicketNumber = 0; 
 	
-	int i;
-	for (i = 0; i < NUMBER_OF_CLIENTS; i++) {
-		sem_wait(semClientsRequest); 
+	struct timespec waitingTime;
+	clock_gettime(CLOCK_REALTIME, &waitingTime);
+	waitingTime.tv_sec += 5;	//10 sec waiting max for next client
+
+
+	while(sem_timedwait(semClientsRequest, &waitingTime) != -1) {
+		clock_gettime(CLOCK_REALTIME, &waitingTime);
+		waitingTime.tv_sec += 5;	//10 sec waiting max for next client
+		
 		sleep(queue->servicingTime);
 		
 		queue->ticketNumber = nextTicketNumber;
@@ -65,23 +71,12 @@ int main(void){
 		nextTicketNumber++;
 		
 		sem_post(semSellerFree);  
-	} 
-	
-	for (i = 0; i < NUMBER_OF_CLIENTS; i++) {
-		wait(NULL);
+		//sem_post(semClientsRequest);
+		
 	}
-
-
 	
-	sem_unlink("/sem_ex12_clients_request");
-	sem_unlink("/sem_ex12_seller_free");
-	sem_unlink("/sem_mutex");
 
-	munmap(queue, sizeof(clientQueue));
-	close(fd);
-	printf("Seller has no more clients\n");
-
-	printf("================= Seller Exiting ========================\n");
+	printf("Seller is closing the shop!\n");
 
 	return 0;
 }

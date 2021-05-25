@@ -12,7 +12,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define NUMBER_OF_CLIENTS 2
+#define NUMBER_OF_CLIENTS 5
 
 typedef struct {
 	int ticketNumber; 
@@ -21,17 +21,17 @@ typedef struct {
 
 
 int main(void){
-    sem_t *semClientsRequest = sem_open("/sem_ex12_clients_request", O_CREAT, 0644, 0);
+    sem_t *semClientsRequest = sem_open("/sem_ex12_clients_request", O_CREAT);
 	if (semClientsRequest == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
     }
-	sem_t *semSellerFree = sem_open("/sem_ex12_seller_free", O_CREAT, 0644, 1);
+	sem_t *semSellerFree = sem_open("/sem_ex12_seller_free", O_CREAT);
 	if (semSellerFree == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
     }
-	sem_t *mutex = sem_open("/sem_mutex", O_CREAT, 0644, 0);
+	sem_t *mutex = sem_open("/sem_mutex", O_CREAT);
 	if (mutex == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
@@ -56,41 +56,38 @@ int main(void){
 	// client
 	
 	srand(time(NULL) * getpid());
-	int maxWaitingTime = rand() % 9 + 1;
+	int maxWaitingTime = rand() % 9 + 5;
 	
 	struct timespec waitingTime;
 	clock_gettime(CLOCK_REALTIME, &waitingTime);
-	waitingTime.tv_sec += maxWaitingTime;	//random between 1-10
-
+	waitingTime.tv_sec += maxWaitingTime;	//random between 5-15
 
 	int semReturn;
-	semReturn = sem_timedwait(semSellerFree, &waitingTime);
+	semReturn = sem_timedwait(mutex, &waitingTime);
 	if (semReturn == -1 && errno == ETIMEDOUT) {
 		printf("Client %d couldn't wait anymore and made a temper tantrum!!! (sem timedout)\n", getpid());
 		exit(EXIT_FAILURE);
 	}
 	
+	sem_wait(semSellerFree);
+		
+	queue->servicingTime = 1;  //request for a ticket
+		
+	sem_post(semClientsRequest);  
+		
+	sem_wait(semSellerFree);	
+		
+		
+	int ticketNumber;
+	ticketNumber = queue->ticketNumber;
+	printf("Client %d got ticket: %d\n", getpid(), ticketNumber);
+		
+		
+	sem_post(semSellerFree); 
+	sem_post(mutex);
+
 	
 
-		queue->servicingTime = 1;  //request for a ticket
-		
-		sem_post(semClientsRequest);  
-		sem_wait(semSellerFree);	
-		
-		
-		int ticketNumber;
-		ticketNumber = queue->ticketNumber;
-		printf("Client %d got ticket: %d\n", getpid(), ticketNumber);
-		
-		sem_post(semSellerFree); 	
-	
-
-	sem_unlink("/sem_ex12_clients_request");
-	sem_unlink("/sem_ex12_seller_free");
-	sem_unlink("/sem_mutex");
-
-	munmap(queue, sizeof(clientQueue));
-	close(fd);
 	printf("================= Client Exiting ========================\n");
 
 	return 0;

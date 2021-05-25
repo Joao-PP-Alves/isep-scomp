@@ -11,7 +11,7 @@
 #include <time.h>
 #include <string.h>
 
-#define NUMBER_OF_CLIENTS 2
+#define NUMBER_OF_CLIENTS 10
 
 typedef struct {
 	int ticketNumber; 
@@ -50,13 +50,13 @@ int main(int argc, char *agrv[]) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
     }
-	sem_t *mutex = sem_open("/sem_mutex", O_CREAT, 0644, 0);
+	sem_t *mutex = sem_open("/sem_mutex", O_CREAT, 0644, 1);
 	if (mutex == SEM_FAILED) {
         perror("Error at sem_open()!\n");
         exit(EXIT_FAILURE);
     }
 
-/*
+
     int fd;
 	fd = shm_open("/shm_ex12", O_CREAT | O_EXCL | O_RDWR , S_IRUSR|S_IWUSR);
     if (fd == -1){
@@ -72,26 +72,32 @@ int main(int argc, char *agrv[]) {
 		perror("Error maping the object.\n");
 		exit(EXIT_FAILURE);
 	}
-*/
+
 	//sem_wait(semClientsRequest); // blocks any client to request a ticket before seller is executed.
 
-	int id = fork();
-    
-	if (id > 0) {
-		execProgram("./seller");
-	} else {
+ 
+	int sellers = 1;
+	int buyers = NUMBER_OF_CLIENTS;
 	
-		int i;
-		for (i = 0; i < NUMBER_OF_CLIENTS; i++) {
-			execProgram("./client");
+	int i;
+	for (i = 0; i < NUMBER_OF_CLIENTS; i++) {
+		if (sellers > 0) {
+			execProgram("./seller");
+			sellers--;
 		}
-		
+		if(buyers > 0) {
+			execProgram("./client");
+			buyers--;
+		}
 	}
 	
+	for(i = 0; i < NUMBER_OF_CLIENTS + 1 ; i++){
+        wait(NULL);
+    }
 	
-	while (wait(NULL) > 0);
-	
-/*
+	printf("vai fechar.\n");
+
+
 	if(munmap(queue, sizeof(clientQueue)) == -1) {
 		perror("Munmap failed.\n");
 		exit(EXIT_FAILURE);
@@ -104,7 +110,7 @@ int main(int argc, char *agrv[]) {
         perror("Unlink failed\n");
         exit(EXIT_FAILURE);
     }
-	*/
+	
 
 
 	if (sem_close(semClientsRequest) < 0) {
