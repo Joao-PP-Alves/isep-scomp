@@ -90,6 +90,36 @@ int main(void){
 
 	printf("================= Client Exiting ========================\n");
 
+
+	if(munmap(queue, sizeof(clientQueue)) == -1) {
+		perror("Munmap failed.\n");
+		exit(EXIT_FAILURE);
+	}	
+	if(close(fd) == -1) {	
+		perror("Cant close object.\n");
+		exit(EXIT_FAILURE);
+	}
+
+
+	if (sem_close(semClientsRequest) < 0) {
+        perror("Error at sem close");
+        exit(EXIT_FAILURE);
+    }
+
+	if (sem_close(semSellerFree) < 0) {
+        perror("Error at sem close");
+        exit(EXIT_FAILURE);
+    }
+
+	
+	if (sem_close(mutex) < 0) {
+        perror("Error at sem close");
+        exit(EXIT_FAILURE);
+    }
+ 
+
+
+
 	return 0;
 
 }

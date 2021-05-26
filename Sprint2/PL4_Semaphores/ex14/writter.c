@@ -85,7 +85,7 @@ int main(int argc, char *agrv[]) {
 
 	printf("==== Writter a sair ====\n\n");
 
-/*
+
 	if(munmap(info, sizeof(shmStruct)) == -1) {
 		perror("Munmap failed.\n");
 		exit(EXIT_FAILURE);
@@ -116,7 +116,7 @@ int main(int argc, char *agrv[]) {
     }
 
 
-*/
+
 
     return 0;
 }

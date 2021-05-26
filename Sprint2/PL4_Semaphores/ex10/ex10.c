@@ -128,3 +128,11 @@ int main(int argc, char *agrv[]) {
 
     return 0;
 }
+
+/*
+Only now, discussing this exercise with a fellow colleague that I noticed that
+this solution should involve several inserts and consults simultaneously... 
+Obviously it's not working like that and I don't have the time to spend
+to solve this issue.
+
+*/

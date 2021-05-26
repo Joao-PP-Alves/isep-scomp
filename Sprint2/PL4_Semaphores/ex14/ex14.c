@@ -74,10 +74,7 @@ int main(int argc, char *agrv[]) {
 	info->totalWritters = 0;
 	info->totalReaders = 0;
 	info->currentReaders = 0;
-	
-	//sprintf(info->string, "pid is %d, time is ..", getpid());
-
-	
+		
 	
 	int writters = WRITTERS;
 	int readers = READERS;
